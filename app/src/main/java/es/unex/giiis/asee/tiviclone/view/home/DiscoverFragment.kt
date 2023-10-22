@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import es.unex.giiis.asee.tiviclone.databinding.FragmentDiscoverBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.giiis.asee.tiviclone.api.APICallback
@@ -17,6 +18,9 @@ import es.unex.giiis.asee.tiviclone.data.model.Show
 import es.unex.giiis.asee.tiviclone.data.dummy.dummyShows
 import es.unex.giiis.asee.tiviclone.data.toShow
 import es.unex.giiis.asee.tiviclone.util.BACKGROUND
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,33 +82,34 @@ class DiscoverFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        if (_shows.isEmpty()) {
-            binding.spinner.visibility = View.VISIBLE
-
-            fetchShows(object : APICallback {
-                override fun onCompleted(tvShows: List<TvShow?>) {
-                    Log.d("DiscoverFragment", "APICallback onCompleted")
-                    val shows = tvShows.map {
-                        it?.toShow()
-                    }
-                    // Update the UI on the main thread
-                    activity?.runOnUiThread {
-                        _shows = shows?.filterNotNull() ?: dummyShows
-                        adapter.updateData(_shows)
-                        binding.spinner.visibility = View.GONE
-                    }
-                }
-
-                override fun onError(cause: Throwable) {
-                    Log.e("DiscoverFragment", "APICallback onError")
-                    // Update the UI on the main thread
-                    activity?.runOnUiThread {
-                        Toast.makeText(context, "Error fetching data", Toast.LENGTH_SHORT).show()
-                        binding.spinner.visibility = View.GONE
-                    }
+        lifecycleScope.launch {
+            if (_shows.isEmpty()) {
+                binding.spinner.visibility = View.VISIBLE
+                try {
+                    _shows = fetchShows().filterNotNull()
+                    adapter.updateData(_shows)
+                } catch (error: APIError) {
+                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                } finally {
+                    binding.spinner.visibility = View.GONE
                 }
             }
-            )
+        }
+    }
+
+    private suspend fun fetchShows(): List<Show> {
+       return withContext(Dispatchers.IO){
+            var apiShows = listOf<Show>()
+            val result = try {
+                getNetworkService().getShows(1).execute()
+            } catch (cause: Throwable) {
+                throw APIError("Unable to fetch data from API", cause)
+            }
+            if (result.isSuccessful)
+                apiShows = result.body()!!.tvShows.map(TvShow::toShow)
+            else
+                throw APIError("API Response error ${result.errorBody()}", null)
+            apiShows
         }
     }
 
