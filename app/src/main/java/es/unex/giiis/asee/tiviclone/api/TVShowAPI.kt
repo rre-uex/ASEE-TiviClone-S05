@@ -30,9 +30,9 @@ fun getNetworkService() = service
 interface TVShowAPI {
 
     @GET("most-popular")
-    fun getShows(
+  suspend fun getShows(
         @Query("page") page: Int
-    ): Call<TvShowPage>
+    ): TvShowPage
 
     @GET("show-details")
     fun getShowDetail(

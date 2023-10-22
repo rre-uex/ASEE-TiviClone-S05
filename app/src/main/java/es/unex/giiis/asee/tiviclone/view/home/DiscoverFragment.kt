@@ -86,7 +86,7 @@ class DiscoverFragment : Fragment() {
             if (_shows.isEmpty()) {
                 binding.spinner.visibility = View.VISIBLE
                 try {
-                    _shows = fetchShows().filterNotNull()
+                    _shows = fetchShows().filterNotNull().map(TvShow::toShow)
                     adapter.updateData(_shows)
                 } catch (error: APIError) {
                     Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
@@ -97,45 +97,14 @@ class DiscoverFragment : Fragment() {
         }
     }
 
-    private suspend fun fetchShows(): List<Show> {
-       return withContext(Dispatchers.IO){
-            var apiShows = listOf<Show>()
-            val result = try {
-                getNetworkService().getShows(1).execute()
-            } catch (cause: Throwable) {
-                throw APIError("Unable to fetch data from API", cause)
-            }
-            if (result.isSuccessful)
-                apiShows = result.body()!!.tvShows.map(TvShow::toShow)
-            else
-                throw APIError("API Response error ${result.errorBody()}", null)
-            apiShows
+    private suspend fun fetchShows(): List<TvShow> {
+        var apiShows = listOf<TvShow>()
+        try {
+            apiShows = getNetworkService().getShows(1).tvShows
+        } catch (cause: Throwable) {
+            throw APIError("Unable to fetch data from API", cause)
         }
-    }
-
-    private fun fetchShows(apiCallback: APICallback) {
-        BACKGROUND.submit{
-            try {
-                // Make network request using a blocking call
-                val result = getNetworkService().getShows(1).execute()
-
-                if (result.isSuccessful)
-                    apiCallback.onCompleted(result.body()!!.tvShows)
-                else
-                    apiCallback.onError(APIError("API Response error ${result.errorBody()}", null))
-
-            } catch (cause: Throwable) {
-                // Update the UI on the main thread if something goes wrong
-                // Bad modularization, we should not know about the UI thread here
-                activity?.runOnUiThread {
-                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-                    binding.spinner.visibility = View.GONE
-                }
-                Log.e("DiscoverFragment", "APICallback connection error")
-                // If anything throws an exception, inform the caller
-                throw APIError("Unable to fetch data from API", cause)
-            }
-        }
+        return apiShows
     }
 
     private fun setUpRecyclerView() {
