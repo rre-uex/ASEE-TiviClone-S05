@@ -12,7 +12,7 @@
         android:layout_height="220dp"
         android:contentDescription="show cover"
         android:scaleType="centerCrop"
-        android:src="@drawable/the_wire_banner"
+        android:src="@drawable/placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,7 +51,7 @@
         android:layout_marginTop="56dp"
         android:contentDescription="show cover"
         android:scaleType="centerCrop"
-        android:src="@drawable/the_wire"
+        android:src="@drawable/placeholder"
         app:layout_constraintStart_toStartOf="@id/tv_show_title"
         app:layout_constraintTop_toBottomOf="@id/tv_show_title" />
 

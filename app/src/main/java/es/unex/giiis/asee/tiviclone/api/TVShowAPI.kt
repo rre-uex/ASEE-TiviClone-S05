@@ -35,9 +35,9 @@ interface TVShowAPI {
     ): TvShowPage
 
     @GET("show-details")
-    fun getShowDetail(
+    suspend fun getShowDetail(
         @Query("q") id: Int
-    ): Call<TvShowDetail>
+    ): TvShowDetail
 }
 
 class APIError(message: String, cause: Throwable?) : Throwable(message, cause)
