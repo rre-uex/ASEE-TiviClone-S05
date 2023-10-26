@@ -36,7 +36,7 @@ class DiscoverFragment : Fragment() {
 
     private val TAG = "DiscoverFragment"
 
-    private var _shows = listOf<Show>()
+    private var _shows: List<Show> = emptyList()
 
     private lateinit var listener: OnShowClickListener
     interface OnShowClickListener {
@@ -92,6 +92,7 @@ class DiscoverFragment : Fragment() {
                     Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
                 } finally {
                     binding.spinner.visibility = View.GONE
+
                 }
             }
         }

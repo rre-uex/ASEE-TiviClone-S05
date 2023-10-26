@@ -26,7 +26,7 @@ class DiscoverAdapter(
                 tvTitle.text = show.title
                 tvYear.text =  show.year
                 tvSeasons.text = "${show.seasons} seasons"
-                //itemImg.setImageResource(show.image)
+
                 context?.let {
                     Glide.with(context)
                         .load(show.imagePath)

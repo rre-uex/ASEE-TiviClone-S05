@@ -1,20 +1,9 @@
 package es.unex.giiis.asee.tiviclone.util
 
 import com.google.gson.Gson
-import es.unex.giiis.asee.tiviclone.data.dummy.dummyNetworkData
+import es.unex.giiis.asee.tiviclone.data.dummy.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-
-/**
- * A list of fake results to return.
- */
-/*private val FAKE_RESULTS = listOf(
-    "Hello, coroutines!",
-    "My favorite feature",
-    "Async made easy",
-    "Coroutines by example",
-    "Check out the Advanced Coroutines codelab next!"
-)*/
 
 /**
  * This class will return fake [Response] objects to Retrofit, without actually using the network.
@@ -38,7 +27,10 @@ class SkipNetworkInterceptor: Interceptor {
 //        return if (wantRandomError()) {
 //            makeErrorResult(chain.request())
 //        } else {
-           return makeOkResult(chain.request())
+        return if (chain.request().url.toString().contains("most-popular"))
+            makePopularOkResult(chain.request())
+        else
+            makeDetailOkResult(chain.request())
 //        }
     }
 
@@ -81,12 +73,7 @@ class SkipNetworkInterceptor: Interceptor {
      * "$random_string"
      * ```
      */
-    private fun makeOkResult(request: Request): Response {
-//        var nextResult = lastResult
-//        while (nextResult == lastResult) {
-//            nextResult = FAKE_RESULTS.random()
-//        }
-//        lastResult = nextResult
+    private fun makePopularOkResult(request: Request): Response {
         return Response.Builder()
             .code(200)
             .request(request)
@@ -94,7 +81,19 @@ class SkipNetworkInterceptor: Interceptor {
             .message("OK")
             .body(ResponseBody.create(
                 "application/json".toMediaType(),
-                gson.toJson(dummyNetworkData)))
+                gson.toJson(dummyNetworkPopResponse)))
+            .build()
+    }
+
+    private fun makeDetailOkResult(request: Request): Response {
+        return Response.Builder()
+            .code(200)
+            .request(request)
+            .protocol(Protocol.HTTP_1_1)
+            .message("OK")
+            .body(ResponseBody.create(
+                "application/json".toMediaType(),
+                gson.toJson(dummyNetworkDetailResponse)))
             .build()
     }
 }

@@ -3,6 +3,7 @@ package es.unex.giiis.asee.tiviclone.api
 import es.unex.giiis.asee.tiviclone.data.api.TvShow
 import es.unex.giiis.asee.tiviclone.data.api.TvShowDetail
 import es.unex.giiis.asee.tiviclone.data.api.TvShowPage
+import es.unex.giiis.asee.tiviclone.util.SkipNetworkInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -13,7 +14,7 @@ import retrofit2.http.Query
 
 private val service: TVShowAPI by lazy {
     val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor())
+        .addInterceptor(SkipNetworkInterceptor())
         .build()
 
     val retrofit = Retrofit.Builder()

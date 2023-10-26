@@ -2,6 +2,8 @@ package es.unex.giiis.asee.tiviclone.data.dummy
 
 import es.unex.giiis.asee.tiviclone.R
 import es.unex.giiis.asee.tiviclone.data.api.TvShow
+import es.unex.giiis.asee.tiviclone.data.api.TvShowDetail
+import es.unex.giiis.asee.tiviclone.data.api.TvShowPage
 import es.unex.giiis.asee.tiviclone.data.model.Show
 
 val dummyShows: List<Show> = listOf(
@@ -111,18 +113,18 @@ val dummyShows: List<Show> = listOf(
     )
 )
 
-val dummyNetworkData = listOf(
-    TvShow(
-        id = 35624,
-        name = "The Flash",
-        permalink = "the-flash",
-        startDate = "2014-10-07",
-        endDate = null,
-        country = "US",
-        network = "The CW",
-        status = "Ended",
-        imageThumbnailPath = "https://static.episodate.com/images/tv-show/thumbnail/35624.jpg"
-    ),
+val dummyNetworkData = arrayListOf<TvShow>(
+//    TvShow(
+//        id = 35624,
+//        name = "The Flash",
+//        permalink = "the-flash",
+//        startDate = "2014-10-07",
+//        endDate = null,
+//        country = "US",
+//        network = "The CW",
+//        status = "Ended",
+//        imageThumbnailPath = "https://static.episodate.com/images/tv-show/thumbnail/35624.jpg"
+//    ),
     TvShow(
         id = 23455,
         name = "Game of Thrones",
@@ -332,4 +334,28 @@ val dummyNetworkData = listOf(
         status = "Running",
         imageThumbnailPath = "https://static.episodate.com/images/tv-show/thumbnail/32157.jpg"
     )
+)
+
+
+val dummyNetworkPopResponse = TvShowPage(
+    total = "1000",
+    page = 1,
+    pages = 100,
+    tvShows = dummyNetworkData
+)
+
+val dummyNetworkDetailResponse = TvShowDetail(
+     tvShow = TvShow(
+         id = 23455,
+         name = "Game of Thrones",
+         permalink = "game-of-thrones",
+         startDate = "2011-04-17",
+         endDate = null,
+         country = "US",
+         network = "HBO",
+         status = "Ended",
+         description = "Nine noble families fight for control of the mythical land of Westeros. Political and sexual intrigue is pervasive. Robert Baratheon, King of Westeros, asks his old friend Eddard, Lord Stark, to serve as Hand of the King, or highest official. Secretly warned that the previous Hand was assassinated, Eddard accepts in order to investigate further. Meanwhile the Queen's family, the Lannisters, may be hatching a plot to take power. Across the sea, the last members of the previous and deposed ruling family, the Targaryens, are also scheming to regain the throne. The friction between the houses Stark, Lannister, Baratheon and Targaryen and with the remaining great houses Greyjoy, Tully, Arryn,Tyrell and Martell leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war and political confusion, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
+         imagePath = "https://static.episodate.com/images/tv-show/full/23455.jpg",
+         imageThumbnailPath = "https://static.episodate.com/images/tv-show/thumbnail/23455.jpg"
+     )
 )
